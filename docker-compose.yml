@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-container
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}          # Database name
+      POSTGRES_USER: ${POSTGRES_USER}      # Database user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Database user password
+    ports:
+      - "5432:5432"                        # Exposing port for accessing the DB
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # SQL script to run on startup
+      - ./questions.csv:/docker-entrypoint-initdb.d/questions.csv  # CSV file to import
