@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}      # Database user
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}  # Database user password
     ports:
-      - "5432:5432"                        # Exposing port for accessing the DB
+      - "5433:5432"                        # Exposing port for accessing the DB
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql  # SQL script to run on startup
       - ./questions.csv:/docker-entrypoint-initdb.d/questions.csv  # CSV file to import

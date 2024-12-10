@@ -16,7 +16,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           script: |
-            cd Desktop/BD-RAG
+            cd Desktop
             docker compose down
             docker rmi postgres:latest
             git pull origin main
