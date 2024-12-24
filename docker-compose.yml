@@ -3,7 +3,7 @@ version: '3.8'
 services:
   postgres:
     image: pgvector/pgvector:pg16
-    container_name: pgvector-container
+    container_name: pgvector
     environment:
       POSTGRES_DB: ${POSTGRES_DB}          # Database name
       POSTGRES_USER: ${POSTGRES_USER}      # Database user
@@ -12,22 +12,36 @@ services:
       - "6024:5432"                        # Exposing port for accessing the DB
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]  # Check if the database is ready
+      interval: 10s                        # Wait 10 seconds between checks
+      retries: 5                           # Retry 5 times before considering it unhealthy
+      start_period: 30s                    # Grace period for the container to start before the first check
+      timeout: 5s                          # Timeout for the health check command
 
   app:
     build:
       context: .
-    image: chainlit-bdrag
-    container_name: chainlit-bdrag-database
+    image: ec2-13-60-143-175.eu-north-1.compute.amazonaws.com/chainlit-bdrag
+    container_name: chainlit-bdrag
     environment:
       POSTGRES_DB: ${POSTGRES_DB}          
       POSTGRES_USER: ${POSTGRES_USER}      
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy   # Only start the app once postgres is healthy
     ports:
       - "8000:8000"
     networks:
       - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]  # Adjust to your app's health endpoint
+      interval: 10s                        # Wait 10 seconds between checks
+      retries: 6                           # Retry 6 times (60s / 10s = 6 retries)
+      start_period: 10s                    # Give the app 10 seconds to start before health check
+      timeout: 5s                          # Timeout for the health check command
+    restart: on-failure                   # Restart the app if the health check fails after retries
 
 networks:
   app-network:

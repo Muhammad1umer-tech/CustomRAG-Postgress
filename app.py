@@ -2,7 +2,7 @@ from helper import  run_query_pgvector_get_response
 import chainlit as cl
 
 def get_rag_response(user_input):
-    return run_query_pgvector_get_response(user_input)
+    return "run_query_pgvector_get_response(user_input)"
 
 
 @cl.on_chat_start
